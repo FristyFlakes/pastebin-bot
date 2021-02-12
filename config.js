@@ -7,12 +7,12 @@ config.doc_formats = [       'application/octet-stream', 'application/json',
 'application/x-javascript']
 
 config.msg = {
-    start_msg : "This is simple [Pastebin Bot](pastebin.com) made by @dcdunkan from [Bots.DC](https://t.me/dcbots).\nWith this Bot, you can create pastes on pastebin super simply. Send /create to start creating the paste. \nHit /help for more details",
+    start_msg : "This is simple [Pastebin Bot](pastebin.com) made by @Iggie from [FLIXBOTS CHANNEL](https://t.me/FlixBots).\nWith this Bot, you can create pastes on pastebin super simply. Send /create to start creating the paste. \nHit /help for more details",
     start_msg_no_emb_msg : 'There was a error while getting the paste. Please make sure that the paste is Public or Unlisted.',
     cancelled_msg : "Paste Creation Cancelled. Enter /create to create a new paste. Or send /help to see the help message.",
     
     help_msg : "Here is a few things you can do with this bot. Click related numbered buttons to get more information about that. See about section to know more about the bot.\n*01*. Creating Pastes as a Guest.\n*02*. Logging in and paste.\n*03*. Configuring the optional arguments.\n*04*. Getting embed codes and links after pasting.\n*05*. Creating a paste from file.\n*06*. Downloading the pasted text as a file.",
-    about_msg : "A few things *about this Pastebin Bot* if you want to know.\n• Developer : [Dunkan.DC](https://telegram.me/dcdunkan) from [Bots.DC](https://telegram.me/dcbots).\n• Language : [Node.JS](https://en.wikipedia.org/wiki/Node.js)\n• Telegram Bot API used : [Telegraf](https://telegraf.js.org)\n• Source Code : Open. https://github.com/dcdunkan/pastebin-bot\n• Bot version : 2.0.3\n• 50th release.\n\nJoin @dcbots for more. See the source code section to know more about the source code. Please star ⭐ if you like it. Do support by joining @dcbots. Thankyou for using thus service.",
+    about_msg : "A few things *about this Pastebin Bot* if you want to know.\n• Developer : [IGGIE](https://telegram.me/Iggie) from [FLIXBOTS CHANNEL](https://telegram.me/FlixBots).\n• Language : [Node.JS](https://en.wikipedia.org/wiki/Node.js)\n• Telegram Bot API used : [Telegraf](https://telegraf.js.org)\n• Source Code : Open. [SOURCE CODE](https://t.me/NoSourceCode)\n• Bot version : 2.0.3\n• 50th release.\n\nJoin @FlixBots for more. See the source code section to know more about the source code. Do support by joining @FlixBots. Thankyou for using thus service.",
     pastebin_what_msg : "*What is Pastebin?*" + 
     "\nSimply pastebin is a Text Cloud. This is an official description they gave as their website description:" + 
     "\n_Pastebin.com is the number one paste tool since 2002. Pastebin is a website where you can store text online for a set period of time_." + 
