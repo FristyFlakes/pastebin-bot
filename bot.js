@@ -181,30 +181,37 @@ bot.action('06', (ctx) => {
 bot.command('cancel', (ctx) => ctx.reply("No process running to get cancelled."))
 getPaste.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getPaste')
 })
 getName.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getName')
 })
 method.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('method')
 })
 guest.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('guest')
 })
 login.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('login')
 })
 loginPaste.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('loginPaste')
 })
 changeName.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('changeName')
     if(ctx.session.isGuest == true){
         ctx.scene.leave('guest')
@@ -214,6 +221,7 @@ changeName.command('cancel', async (ctx) =>{
 })
 getExpiry.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getExpiry')
     if(ctx.session.isGuest == true){
         ctx.scene.leave('guest')
@@ -223,6 +231,7 @@ getExpiry.command('cancel', async (ctx) =>{
 })
 getSyntax.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getSyntax')
     if(ctx.session.isGuest == true){
         ctx.scene.leave('guest')
@@ -232,6 +241,7 @@ getSyntax.command('cancel', async (ctx) =>{
 })
 getPrivacy.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getPrivacy')
     if(ctx.session.isGuest == true){
         ctx.scene.leave('guest')
@@ -241,10 +251,12 @@ getPrivacy.command('cancel', async (ctx) =>{
 })
 getUsername.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getUsername')
 })
 getPass.command('cancel', async (ctx) =>{
     await ctx.reply(config.msg.cancelled_msg)
+    ctx.session.paste = ""
     ctx.scene.leave('getPass')
 })
 datadl.command('cancel', async (ctx) =>{
@@ -254,6 +266,7 @@ datadl.command('cancel', async (ctx) =>{
 
 
 bot.command('create', async (ctx) => {
+    ctx.session.paste = ""
     ctx.scene.enter('getPaste')
 })
 bot.help((ctx) => {
@@ -443,14 +456,14 @@ loginPaste.action('login-paste', async (ctx) => {
                         ctx.session.username = ""
                         ctx.session.pass = ""
                         ctx.session.paste = ""
-                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}. ${data}\nLogin mode : true`)
+                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
                     } else {
                         ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                             `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
                         ctx.session.username = ""
                         ctx.session.pass = ""
                         ctx.session.paste = ""
-                        ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with text(${ctx.session.format}) as ${ctx.session.privacy}. ${data}\nLogin mode : true`)
+                        ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
                         console.log(data)
                     }
                 });
@@ -473,14 +486,14 @@ loginPaste.action('login-paste', async (ctx) => {
                         ctx.session.username = ""
                         ctx.session.pass = ""
                         ctx.session.paste = ""
-                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file as ${ctx.session.privacy}. ${data}\nLogin mode : true`)
+                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
                     } else {
                         ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                             `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
                         ctx.session.username = ""
                         ctx.session.pass = ""
                         ctx.session.paste = ""
-                        ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with file as ${ctx.session.privacy}. ${data}\nLogin mode : true`)
+                        ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
                         console.log(data)
                     }
                 });
@@ -746,7 +759,7 @@ guest.action('paste-guest', async (ctx) => {
                 ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                        `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`, { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }], [{ text: 'Download paste as file', url : `https://t.me/${process.env.BOT_USERNAME}?start=dl_${data.split('/')[3]}` }]]}
                 });
-                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}. ${data}\nLogin mode : false`)
+                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
                 ctx.session.paste = ""
                 ctx.scene.leave('guest')
             } else {
@@ -754,7 +767,7 @@ guest.action('paste-guest', async (ctx) => {
                     `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" }
                 );
                 ctx.session.paste = ""
-                ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with text(${ctx.session.format}) as ${ctx.session.privacy}. ${data}\nLogin mode : false`)
+                ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
                 ctx.scene.leave('guest')
                 console.log(data)
             }
@@ -775,12 +788,12 @@ guest.action('paste-guest', async (ctx) => {
                     `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`,
                      { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }]]}});
                 ctx.session.paste = ""
-                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file as ${ctx.session.privacy}. ${data}\nLogin mode : false`)
+                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
             } else {
                 ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                     `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
                 ctx.session.paste = ""
-                ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with file as ${ctx.session.privacy}. ${data}\nLogin mode : false`)
+                ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
                 console.log(data)
             }
          });
@@ -788,8 +801,7 @@ guest.action('paste-guest', async (ctx) => {
     }
 })
 
-console.log('pastebin-bot compiled successfully')
-console.log('pastebin-bot now running...')
+console.log(`pastebin-bot compiled successfully and now running as @${process.env.BOT_USERNAME}`)
 bot.launch({
   webhook: {
     domain: process.env.BOT_DOMAIN,
