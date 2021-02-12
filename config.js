@@ -27,7 +27,7 @@ config.msg = {
     help_4_msg : "*Getting embed codes and links after pasting.*\n• After pasting, you will be able to get embed codes for your paste. This option only works properly if the paste is public or unlisted.\n• You can click the Embed Codes button, which will appear with the message after pasting successfully.\n• Then at bottom of your screen a START button will appear. Click it to get the message which contains the embed codes.",
     help_5_msg : "*Creating a paste from file.*\n• Send a text-kind file to the bot while not in pasting another paste.\n• The bot will check the file.\n• If it is an allowed format, you can continue pasting just like normal way..",
     help_6_msg : "*Downloading the pasted text as a file.*\n• After pasting with messages, click the Download paste as a file button.\n• Enter the filename with extension that you liked to get the file as. (Please enter a valid filename)\n• After sending the filename, click the download button. And it will start to create and upload the file for you.",
-    source_code_msg : "This is an OPEN SOURCE PROJECT. Source Code of this bot is available at github.com/dcdunkan/pastebin-bot. Please give us a ⭐ if you liked it. And if you got any ideas, requests, please make an issue, or pull a request. Thankyou."
+    source_code_msg : "This is an CLOSED SOURCE PROJECT. Source Code of this bot is closed"
 }
 
 config.msgopts = {
