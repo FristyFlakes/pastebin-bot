@@ -16,6 +16,9 @@ const bot = new Telegraf(process.env.BOT_TOKEN, {telegram: {webhookReply: false}
 const stage = new Stage();
 
 // Scene Registration
+const broadcast = new Scene('broadcast');
+stage.register(broadcast);
+
 const getPaste = new Scene('getPaste');
 stage.register(getPaste);
 const getName = new Scene('getName');
@@ -450,13 +453,22 @@ loginPaste.action('login-paste', async (ctx) => {
                     privacy : ctx.session.privacyno
                 }, function(success, data) {
                     if(success) {
-                        const raw = "https://pastebin.com/raw/" + data.split('/')[3];
-                        ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
-                            `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`, { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }], [{ text: 'Download paste as file', url : `https://t.me/${process.env.BOT_USERNAME}?start=dl_${data.split('/')[3]}` }]]}});
-                        ctx.session.username = ""
-                        ctx.session.pass = ""
-                        ctx.session.paste = ""
-                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        if(data.substr(0, 2) == "Bad"){
+                            ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                                `Some kind of error occurred. Error Data : ${data}`,
+                                { parse_mode : "Markdown" }
+                            );
+                            ctx.session.paste = ""
+                            ownerLog('Paste creation failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        } else {
+                            const raw = "https://pastebin.com/raw/" + data.split('/')[3];
+                            ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
+                                `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`, { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }], [{ text: 'Download paste as file', url : `https://t.me/${process.env.BOT_USERNAME}?start=dl_${data.split('/')[3]}` }]]}});
+                            ctx.session.username = ""
+                            ctx.session.pass = ""
+                            ctx.session.paste = ""
+                            ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        }
                     } else {
                         ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                             `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
@@ -469,6 +481,7 @@ loginPaste.action('login-paste', async (ctx) => {
                 });
             ctx.scene.leave('loginPaste')
             } else {
+                ctx.session.file = false;
                 await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id, 'Reading file...')  
                 await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id, 'Creating paste...')
                 await paste.createFromFile({
@@ -479,14 +492,23 @@ loginPaste.action('login-paste', async (ctx) => {
                     privacy : ctx.session.privacyno
                 }, async function(success, data) {
                     if(success){
-                        const raw = "https://pastebin.com/raw/" + data.split('/')[3]
-                        await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
-                            `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`,
-                            { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }]]}});
-                        ctx.session.username = ""
-                        ctx.session.pass = ""
-                        ctx.session.paste = ""
-                        ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        if(data.substr(0, 2) == "Bad"){
+                            ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                                `Some kind of error occurred. Error Data : ${data}`,
+                                { parse_mode : "Markdown" }
+                            );
+                            ctx.session.paste = ""
+                            ownerLog('Paste creation failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        } else {
+                            const raw = "https://pastebin.com/raw/" + data.split('/')[3]
+                            await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                                `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`,
+                                { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }]]}});
+                            ctx.session.username = ""
+                            ctx.session.pass = ""
+                            ctx.session.paste = ""
+                            ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : true`)
+                        }
                     } else {
                         ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                             `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
@@ -755,13 +777,22 @@ guest.action('paste-guest', async (ctx) => {
             privacy : ctx.session.privacyno
         }, function(success, data) {
             if(success) {
-                const raw = "https://pastebin.com/raw/" + data.split('/')[3];
-                ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
-                       `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`, { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }], [{ text: 'Download paste as file', url : `https://t.me/${process.env.BOT_USERNAME}?start=dl_${data.split('/')[3]}` }]]}
-                });
-                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
-                ctx.session.paste = ""
-                ctx.scene.leave('guest')
+                if(data.split(' ')[0] == "Bad"){
+                    ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                        `Some kind of error occurred. Error Data : ${data}`
+                    );
+                    ctx.session.paste = ""
+                    ownerLog('Paste creation failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
+                    ctx.scene.leave('guest')
+                } else if(data.split(' ')[0] != 'Bad') {
+                    const raw = "https://pastebin.com/raw/" + data.split('/')[3];
+                    ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
+                           `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`, { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }], [{ text: 'Download paste as file', url : `https://t.me/${process.env.BOT_USERNAME}?start=dl_${data.split('/')[3]}` }]]}
+                    });
+                    ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
+                    ctx.session.paste = ""
+                    ctx.scene.leave('guest')
+                }  
             } else {
                 ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                     `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" }
@@ -769,10 +800,10 @@ guest.action('paste-guest', async (ctx) => {
                 ctx.session.paste = ""
                 ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with text(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
                 ctx.scene.leave('guest')
-                console.log(data)
             }
         });
     } else {
+        ctx.session.file = false;
         await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id, 'Reading file...')  
         await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id, 'Creating paste...')
         await paste.createFromFile({
@@ -783,18 +814,26 @@ guest.action('paste-guest', async (ctx) => {
             privacy : ctx.session.privacyno
         }, async function(success, data) {
             if(success){
-                const raw = "https://pastebin.com/raw/" + data.split('/')[3]
-                await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
-                    `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`,
-                     { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }]]}});
-                ctx.session.paste = ""
-                ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
-            } else {
+                if(data.substr(0, 2) == "Bad"){
+                    ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                        `Some kind of error occurred. Error Data : ${data}`,
+                        { parse_mode : "Markdown" }
+                    );
+                    ctx.session.paste = ""
+                    ownerLog('Paste creation failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
+                } else {
+                    const raw = "https://pastebin.com/raw/" + data.split('/')[3]
+                    await ctx.telegram.editMessageText(msg.chat.id, msg.message_id, msg.message_id,
+                        `The Paste [${ctx.session.name}](${data}) has been Successfully Pasted at ${data}`,
+                         { parse_mode : "Markdown", reply_markup: { inline_keyboard : [[{text : "See on browser", url : data }], [{text : "RAW Data", url : raw }, { text : 'Embed Codes', url : `http://t.me/${process.env.BOT_USERNAME}?start=emb_${data.split('/')[3]}` }]]}});
+                    ctx.session.paste = ""
+                    ownerLog('Created a paste successfully', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Pasted with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
+                }
+           } else {
                 ctx.telegram.editMessageText( msg.chat.id, msg.message_id, msg.message_id,
                     `Some kind of error occurred. Error Data : ${data}`, { parse_mode : "Markdown" });
                 ctx.session.paste = ""
                 ownerLog('Paste failed.', `[${msg.chat.id}](tg://user?id=${msg.chat.id}) Paste creation failed with file(${ctx.session.format}) as ${ctx.session.privacy}\n*Expiry*: ${ctx.session.expires}.\n${data}\nLogin mode : false`)
-                console.log(data)
             }
          });
          ctx.scene.leave('guest')
